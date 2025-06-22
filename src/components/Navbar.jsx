@@ -6,7 +6,7 @@ import { SignInButton, useClerk, UserButton, useUser } from '@clerk/clerk-react'
 
 
 const Navbar = () => {
-    const [isOpen, setisOpen] = useState(false);
+    const [isOpen, setisOpen] = useState(false);            //this state is for opening the nav bar when the isze of the screen reduces
     const { user } = useUser()
     const { openSignIn } = useClerk()                     //this will enable the signin drop down menu which is used in the button mentioned below 
 
@@ -22,11 +22,11 @@ const Navbar = () => {
                  gap-8 min-md:px-8 max-md:h-screen min-md:rounded-full backdrop-blur bg-black/70 md:bg-white/10 md:border
                  border-gray-300/20 overflow-hidden transition-[width] duration-300 h-10 ${isOpen ? 'max-md:w-full' : 'max-md:w-0'}`}>
                 <XIcon className='md:hidden absolute top-6 right-6 w-6 h-6 cursor-pointer' onClick={() => setisOpen(!isOpen)} />
-                <Link to='/' onClick={() => { scrollTo(0, 0), setisOpen(false) }}>Home</Link>
-                <Link to='/movies' onClick={() => { scrollTo(0, 0), setisOpen(false) }}>Movies</Link>
-                <Link to='/' onClick={() => { scrollTo(0, 0), setisOpen(false) }}>Theaters</Link>
-                <Link to='/' onClick={() => { scrollTo(0, 0), setisOpen(false) }}>Releases</Link>
-                <Link to='/favorites' onClick={() => { scrollTo(0, 0), setisOpen(false) }}>Favorites</Link>
+                <Link to='/' onClick={() => { scrollTo(0, 0); setisOpen(false) }}>Home</Link>
+                <Link to='/movies' onClick={() => { scrollTo(0, 0); setisOpen(false) }}>Movies</Link>
+                <Link to='/' onClick={() => { scrollTo(0, 0); setisOpen(false) }}>Theaters</Link>
+                <Link to='/' onClick={() => { scrollTo(0, 0); setisOpen(false) }}>Releases</Link>
+                <Link to='/favorites' onClick={() => { scrollTo(0, 0); setisOpen(false) }}>Favorites</Link>
             </div>
             <div className='flex items-center gap-8'>
                 <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer' />

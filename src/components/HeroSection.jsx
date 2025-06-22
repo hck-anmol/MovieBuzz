@@ -14,17 +14,22 @@ const HeroSection = () => {
             <h1 className='text-5xl md:text-[70px] md:leading-18 font-semibold max-w-110'>Guardians <br /> of the Galaxy</h1>
 
             <div>
-                <span>Action | Adventure | Sci-Fi</span>
-                <div className='flex items-center gap-1'>
-                    <CalendarIcon className='w-4.5 h-4.5' /> 2018
-                </div>
-                <div className='flex items-center gap-1'>
-                    <ClockIcon className='w-4.5 h-4.5' /> 2h 8m
+                <div className='flex gap-4'>
+                    <span>Action | Adventure | Sci-Fi  </span>
+                    <div className='flex items-center gap-1'>
+                        <span><CalendarIcon className='w-4.5 h-4.5' /></span>
+                        <span> 2018</span>
+                    </div>
+                    <div className='flex items-center gap-1'>
+                        <span><ClockIcon className='w-4.5 h-4.5' /></span>
+                        <span>2h 32m</span>
+                    </div>
                 </div>
                 <div>
                     <p className='max-w-md text-gray-300'>In a post-apocayptic world where cities ride on wheels and
                         consume each other to survive, two people meet in london
                         and try to stop a consipracy</p>
+                        <br/>
                     <button onClick={() => {
                         navigate('/movies')
                     }} className='flex items-center gap-1 px-6 py-3 text-sm
