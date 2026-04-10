@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { dummyDateTimeData, dummyShowsData } from '../assets/assets'
+import { useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios'
 import BlurCircle from '../components/BlurCircle';
 import { Heart, PlayCircleIcon, StarIcon } from 'lucide-react';
 import timeformat from '../lib/timeformat';
@@ -12,19 +12,48 @@ const MovieDetails = () => {
   const navigate = useNavigate()
   const { id } = useParams();
   const [show, setshow] = useState(null);
-
+  const [similarMovies, setSimilarMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const getshow = async () => {
-    const show = dummyShowsData.find(show => show._id === id)
-    setshow({
-      movie: show,                         //so we are putting the show data in the movie property of the object that we have created with the name showw......confusing (;
-      dateTime: dummyDateTimeData
-    })
+    try {
+      setLoading(true);
+      const { data: movie } = await axios.get(`/api/movies/${id}`);
+      
+      const { data: shows } = await axios.get(`/api/shows?movie_id=${id}`);
+      
+      // Group shows by date for DateSelect
+      const dateTime = {};
+      shows.forEach(s => {
+          const showDate = new Date(s.show_datetime);
+          const dateString = showDate.toISOString().split('T')[0];
+          if(!dateTime[dateString]) dateTime[dateString] = [];
+          dateTime[dateString].push({ time: s.show_datetime, showId: s.id });
+      });
+
+      setshow({
+        movie: movie,
+        dateTime: dateTime
+      });
+
+      // Get similar movies
+      const { data: allMovies } = await axios.get('/api/movies');
+      setSimilarMovies(allMovies.filter(m => m.id !== id).slice(0, 4));
+
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching details', error);
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
     getshow()
   }, [id])
+
+  if (loading) {
+     return <div className='flex justify-center items-center h-screen'>Loading...</div>;
+  }
 
   return show ? (
     <div className='px-6 md:px-16 lg:px-40 pt-30 md:pt-50'>
@@ -32,15 +61,15 @@ const MovieDetails = () => {
         <img src={show.movie.poster_path} alt="" className='max-md:mx-auto rounded-xl h-104 max-w-70 object-cover' />
         <div className='relative flex flex-col gap-3'>
           <BlurCircle top='-100px' left='-100px' />
-          <p className='text-primary'>ENGLISH</p>
+          <p className='text-primary'>{show.movie.original_language?.toUpperCase() || 'ENGLISH'}</p>
           <h1 className='text-4xl font-semibold max-w-96 text-balance'>{show.movie.title}</h1>
           <div className='flex items-center gap-2 text-gray-300 '>
             <StarIcon className='w-5 h-5 text-primary fill-primary' />
-            {show.movie.vote_average.toFixed(1)} User Rating
+            {show.movie.vote_average?.toFixed(1)} User Rating
           </div>
           <p className='text-gray-400 mt-2 text-sm leading-tight max-w-xl'>{show.movie.overview}</p>
           <p>
-            {timeformat(show.movie.runtime)} | {show.movie.genres.map(genre => genre.name).join(", ")} | {show.movie.release_date.split("-")[0]}
+            {timeformat(show.movie.runtime)} | {show.movie.genres ? show.movie.genres.map(genre => genre.name).join(", ") : ''} | {show.movie.release_date?.split("-")[0]}
           </p>
           <div className='flex items-center flex-wrap gap-4 mt-4'>
             <button className='flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer acitve:scale-95'>
@@ -58,7 +87,7 @@ const MovieDetails = () => {
       <p className='text-lg font-medium mt-20'>Your Favorite Cast</p>
       <div className='overflow-x-auto no-scrollbar mt-8 pb-4'>
         <div className='flex items-center gap-4 w-max px-4'>
-          {show.movie.casts.slice(0, 12).map((cast, index) => (
+          {show.movie.casts?.slice(0, 12).map((cast, index) => (
             <div key={index} className='flex flex-col items-center text-center'>
               <img src={cast.profile_path} alt="" className='rounded-full h-20 md:h-20 aspect-square object-cover' />
               <p className='font-medium text-xs mt-3'>{cast.name}</p>
@@ -70,7 +99,7 @@ const MovieDetails = () => {
 
       <p className='text-lg font-medium mt-20 mb-8'>You May Also Like</p>
       <div className='flex flex-wrap max-sm:justify-center gap-8'>
-        {dummyShowsData.slice(0, 4).map((movie, index) => (
+        {similarMovies.map((movie, index) => (
           <MovieCard key={index} movie={movie} />
         ))}
       </div>
@@ -80,7 +109,7 @@ const MovieDetails = () => {
         </button>
       </div>
     </div>
-  ) : <div> Loading...</div>
+  ) : <div> Show not found. </div>
 }
 
 export default MovieDetails

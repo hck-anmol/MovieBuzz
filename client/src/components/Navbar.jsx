@@ -1,14 +1,12 @@
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from 'lucide-react'
 import React, { useState } from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { assets } from '../assets/assets'
-import { SignInButton, useClerk, UserButton, useUser } from '@clerk/clerk-react'
-
+import { Link, Navigate, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
     const [isOpen, setisOpen] = useState(false);            //this state is for opening the nav bar when the isze of the screen reduces
-    const { user } = useUser()
-    const { openSignIn } = useClerk()                     //this will enable the signin drop down menu which is used in the button mentioned below 
+    const { user, logout } = useAuth()
 
     const Navigate = useNavigate()
     return (
@@ -32,14 +30,17 @@ const Navbar = () => {
                 <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer' />
                 {
                     !user ? (
-                        <button onClick={openSignIn} className='px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer'>Login</button>
-
+                        <button onClick={() => Navigate('/login')} className='px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer'>Login</button>
                     ) : (
-                        <UserButton>
-                            <UserButton.MenuItems>
-                                <UserButton.Action label='My Booking' labelIcon={<TicketPlus  /**here ticket plus is lucid react's icon */ width={15} />} onClick={() => { Navigate('/mybookings') }} />         {/** by default we have two menu items, manage acount and sign out, and to add more of the menu items we do this  */}
-                            </UserButton.MenuItems>
-                        </UserButton>
+                        <div className="relative group z-50 hover:cursor-pointer pb-2 -mb-2">
+                            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white cursor-pointer select-none font-bold">
+                                {user?.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all flex flex-col overflow-hidden">
+                                <button className="px-4 py-2 text-left hover:bg-gray-100 flex items-center gap-2" onClick={() => Navigate('/my-bookings')}><TicketPlus width={15}/> My Bookings</button>
+                                <button className="px-4 py-2 text-left hover:bg-gray-100 text-red-600" onClick={logout}>Logout</button>
+                            </div>
+                        </div>
                     )
                 }
             </div>
