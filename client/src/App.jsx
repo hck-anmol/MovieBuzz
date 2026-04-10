@@ -11,6 +11,11 @@ import Favorite from './pages/Favorite'
 import { Toaster } from 'react-hot-toast'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import AdminLayout from './pages/admin/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminMovies from './pages/admin/AdminMovies'
+import AdminShows from './pages/admin/AdminShows'
+import AdminBookings from './pages/admin/AdminBookings'
 
 
 function App() {
@@ -22,6 +27,7 @@ function App() {
       <Toaster />
       {!isAdminRoute && <Navbar />}
       <Routes>
+        {/* Public routes */}
         <Route path='/' element={<Home />} />
         <Route path='/movies' element={<Movies />} />
         <Route path='/movies/:id' element={<MovieDetails />} />
@@ -30,6 +36,14 @@ function App() {
         <Route path='/favorites' element={<Favorite />} />
         <Route path='/login' element={<Login />} />
         <Route path='/register' element={<Register />} />
+
+        {/* Admin routes */}
+        <Route path='/admin' element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path='movies' element={<AdminMovies />} />
+          <Route path='shows' element={<AdminShows />} />
+          <Route path='bookings' element={<AdminBookings />} />
+        </Route>
       </Routes>
       {!isAdminRoute && <Footer />}
     </>

@@ -6,40 +6,34 @@ import { Heart, PlayCircleIcon, StarIcon } from 'lucide-react';
 import timeformat from '../lib/timeformat';
 import DateSelect from '../components/DateSelect';
 import MovieCard from '../components/MovieCard';
+import { useFavorites } from '../context/FavoritesContext';
 
 const MovieDetails = () => {
-
   const navigate = useNavigate()
   const { id } = useParams();
   const [show, setshow] = useState(null);
   const [similarMovies, setSimilarMovies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const getshow = async () => {
     try {
       setLoading(true);
       const { data: movie } = await axios.get(`/api/movies/${id}`);
-      
       const { data: shows } = await axios.get(`/api/shows?movie_id=${id}`);
-      
-      // Group shows by date for DateSelect
+
       const dateTime = {};
       shows.forEach(s => {
-          const showDate = new Date(s.show_datetime);
-          const dateString = showDate.toISOString().split('T')[0];
-          if(!dateTime[dateString]) dateTime[dateString] = [];
-          dateTime[dateString].push({ time: s.show_datetime, showId: s.id });
+        const showDate = new Date(s.show_datetime);
+        const dateString = showDate.toISOString().split('T')[0];
+        if (!dateTime[dateString]) dateTime[dateString] = [];
+        dateTime[dateString].push({ time: s.show_datetime, showId: s.id });
       });
 
-      setshow({
-        movie: movie,
-        dateTime: dateTime
-      });
+      setshow({ movie, dateTime });
 
-      // Get similar movies
       const { data: allMovies } = await axios.get('/api/movies');
       setSimilarMovies(allMovies.filter(m => m.id !== id).slice(0, 4));
-
       setLoading(false);
     } catch (error) {
       console.error('Error fetching details', error);
@@ -47,13 +41,11 @@ const MovieDetails = () => {
     }
   }
 
-  useEffect(() => {
-    getshow()
-  }, [id])
+  useEffect(() => { getshow() }, [id])
 
-  if (loading) {
-     return <div className='flex justify-center items-center h-screen'>Loading...</div>;
-  }
+  if (loading) return <div className='flex justify-center items-center h-screen'>Loading...</div>;
+
+  const fav = show ? isFavorite(show.movie.id || show.movie._id) : false;
 
   return show ? (
     <div className='px-6 md:px-16 lg:px-40 pt-30 md:pt-50'>
@@ -63,7 +55,7 @@ const MovieDetails = () => {
           <BlurCircle top='-100px' left='-100px' />
           <p className='text-primary'>{show.movie.original_language?.toUpperCase() || 'ENGLISH'}</p>
           <h1 className='text-4xl font-semibold max-w-96 text-balance'>{show.movie.title}</h1>
-          <div className='flex items-center gap-2 text-gray-300 '>
+          <div className='flex items-center gap-2 text-gray-300'>
             <StarIcon className='w-5 h-5 text-primary fill-primary' />
             {show.movie.vote_average?.toFixed(1)} User Rating
           </div>
@@ -72,15 +64,21 @@ const MovieDetails = () => {
             {timeformat(show.movie.runtime)} | {show.movie.genres ? show.movie.genres.map(genre => genre.name).join(", ") : ''} | {show.movie.release_date?.split("-")[0]}
           </p>
           <div className='flex items-center flex-wrap gap-4 mt-4'>
-            <button className='flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer acitve:scale-95'>
+            <button className='flex items-center gap-2 px-7 py-3 text-sm bg-gray-800 hover:bg-gray-900 transition rounded-md font-medium cursor-pointer active:scale-95'>
               <PlayCircleIcon className='w-5 h-5' />
               Watch Trailer
             </button>
-            <a href='#dateSelect' className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font medium cursor-pointer active:scale-95'>Buy Tickets</a>
-            <button className='bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95'>
-              <Heart className={`w-5 h-5`} />
+            <a href='#dateSelect' className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer active:scale-95'>
+              Buy Tickets
+            </a>
+            <button
+              onClick={() => toggleFavorite(show.movie)}
+              className={`p-2.5 rounded-full transition cursor-pointer active:scale-95 ${fav ? 'bg-primary' : 'bg-gray-700 hover:bg-gray-600'}`}
+            >
+              <Heart className={`w-5 h-5 ${fav ? 'fill-white text-white' : ''}`} />
             </button>
           </div>
+          {fav && <p className='text-xs text-primary'>Added to favorites ♥</p>}
         </div>
       </div>
 
@@ -95,6 +93,7 @@ const MovieDetails = () => {
           ))}
         </div>
       </div>
+
       <DateSelect dateTime={show.dateTime} id={id} />
 
       <p className='text-lg font-medium mt-20 mb-8'>You May Also Like</p>
@@ -104,12 +103,12 @@ const MovieDetails = () => {
         ))}
       </div>
       <div className='flex justify-center mt-20'>
-        <button onClick={() => { navigate('/movies') }} className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer'>
+        <button onClick={() => navigate('/movies')} className='px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer'>
           Show more
         </button>
       </div>
     </div>
-  ) : <div> Show not found. </div>
+  ) : <div>Show not found.</div>
 }
 
 export default MovieDetails
