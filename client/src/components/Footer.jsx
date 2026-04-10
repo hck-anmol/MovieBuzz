@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="md:max-w-96">
           <img className="w-36 h-auto" src={assets.logo} alt="logo" />
           <p className="mt-6 text-sm">
-            So this is my first full stack project. I haven't made it all by myself, i took help from greatstack yt channel.
+            A simplified movie booking platform which is smoother, smarter and more reliable.
           </p>
           <div className="flex items-center gap-2 mt-4">
             <img src={assets.googlePlay} alt="google play" className="h-10 w-auto border border-white rounded" />
