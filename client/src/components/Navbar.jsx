@@ -5,11 +5,13 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useCity } from '../context/CityContext'
 import CitySelectorModal from './CitySelectorModal'
+import SearchModal from './SearchModal'
 import { MapPin } from 'lucide-react'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { user, logout } = useAuth();
     const { city } = useCity();
     const navigate = useNavigate();
@@ -38,7 +40,12 @@ const Navbar = () => {
                     <MapPin className="w-5 h-5 text-primary" />
                     {city ? city.substring(0, 15) : 'Select City'}
                 </button>
-                <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer' />
+                <button
+                    onClick={() => setIsSearchOpen(true)}
+                    className='max-md:hidden w-6 h-6 cursor-pointer text-gray-300 hover:text-white transition'
+                >
+                    <SearchIcon className='w-6 h-6' />
+                </button>
                 {
                     !user ? (
                         <button onClick={() => navigate('/login')} className='px-4 py-1 sm:px-7 sm:py-2 bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer'>Login</button>
@@ -71,6 +78,10 @@ const Navbar = () => {
             <CitySelectorModal 
                 isOpen={isCityModalOpen} 
                 onClose={() => setIsCityModalOpen(false)} 
+            />
+            <SearchModal
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
             />
         </div>
     )
