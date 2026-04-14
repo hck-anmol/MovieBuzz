@@ -127,7 +127,7 @@ const MyBookings = () => {
                                         </div>
                                         <div>
                                             <p className='text-xs text-gray-400 mb-1'>Amount</p>
-                                            <p className='font-medium flex items-center gap-1'><Banknote className='w-4 h-4'/>${parseFloat(booking.amount).toFixed(2)}</p>
+                                            <p className='font-medium flex items-center gap-1'><Banknote className='w-4 h-4'/>₹{parseFloat(booking.amount).toFixed(2)}</p>
                                         </div>
                                         <div className='flex items-end md:justify-end'>
                                             <p className='text-xs text-green-400'>Paid</p>

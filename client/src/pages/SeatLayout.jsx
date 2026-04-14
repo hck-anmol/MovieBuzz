@@ -178,7 +178,7 @@ const SeatLayout = () => {
                               <h3 className='text-xl font-semibold mb-4 border-b border-gray-300/20 pb-4'>Booking Summary</h3>
                               <div className='flex justify-between text-gray-300 mb-2'>
                                   <span>Price per ticket</span>
-                                  <span>${showDetails.price}</span>
+                                  <span>₹{showDetails.price}</span>
                               </div>
                               <div className='flex justify-between text-gray-300 mb-6'>
                                   <span>Selected Seats ({selectedSeats.length})</span>
@@ -186,7 +186,7 @@ const SeatLayout = () => {
                               </div>
                               <div className='flex justify-between text-white text-lg font-bold border-t border-gray-300/20 pt-4 mb-8'>
                                   <span>Total Amount</span>
-                                  <span>${(showDetails.price * selectedSeats.length).toFixed(2)}</span>
+                                  <span>₹{(showDetails.price * selectedSeats.length).toFixed(2)}</span>
                               </div>
                               
                               <button 
@@ -194,7 +194,7 @@ const SeatLayout = () => {
                                 disabled={selectedSeats.length === 0}
                                 className={`w-full py-3 rounded-lg font-medium transition cursor-pointer shadow-lg shadow-primary/20 ${selectedSeats.length > 0 ? 'bg-primary hover:bg-primary-dull text-white' : 'bg-gray-700 text-gray-400 cursor-not-allowed'}`}
                               >
-                                  Pay ${(showDetails.price * selectedSeats.length).toFixed(2)}
+                                  Pay ₹{(showDetails.price * selectedSeats.length).toFixed(2)}
                               </button>
                          </div>
                     </div>

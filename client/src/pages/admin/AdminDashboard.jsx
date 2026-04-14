@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
-import { Film, Ticket, Users, DollarSign, TrendingUp, Calendar } from 'lucide-react'
+import { Film, Ticket, Users, IndianRupee, TrendingUp, Calendar } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 const AdminDashboard = () => {
@@ -38,7 +38,7 @@ const AdminDashboard = () => {
         { label: 'Total Movies', value: stats.movies, icon: Film, color: 'text-blue-400', bg: 'bg-blue-400/10', path: '/admin/movies' },
         { label: 'Active Shows', value: stats.shows, icon: Calendar, color: 'text-purple-400', bg: 'bg-purple-400/10', path: '/admin/shows' },
         { label: 'Total Bookings', value: stats.bookings, icon: Ticket, color: 'text-green-400', bg: 'bg-green-400/10', path: '/admin/bookings' },
-        { label: 'Total Revenue', value: `$${stats.revenue}`, icon: DollarSign, color: 'text-primary', bg: 'bg-primary/10', path: '/admin/bookings' },
+        { label: 'Total Revenue', value: `₹${stats.revenue}`, icon: IndianRupee, color: 'text-primary', bg: 'bg-primary/10', path: '/admin/bookings' },
     ]
 
     return (
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
                                             <td className='px-4 py-3 font-mono text-gray-400'>#{b.id}</td>
                                             <td className='px-4 py-3 font-medium'>{b.title}</td>
                                             <td className='px-4 py-3 text-gray-400'>{new Date(b.show_datetime).toLocaleDateString()}</td>
-                                            <td className='px-4 py-3 text-green-400 font-medium'>${parseFloat(b.amount).toFixed(2)}</td>
+                                            <td className='px-4 py-3 text-green-400 font-medium'>₹{parseFloat(b.amount).toFixed(2)}</td>
                                             <td className='px-4 py-3'>
                                                 <span className='bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs'>Confirmed</span>
                                             </td>

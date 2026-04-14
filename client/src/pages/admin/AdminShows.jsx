@@ -103,7 +103,7 @@ const AdminShows = () => {
                                         <div>{new Date(show.show_datetime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                                         <div className='text-xs text-gray-500'>{new Date(show.show_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                                     </td>
-                                    <td className='px-4 py-3 text-green-400 font-medium'>${parseFloat(show.price).toFixed(2)}</td>
+                                    <td className='px-4 py-3 text-green-400 font-medium'>₹{parseFloat(show.price).toFixed(2)}</td>
                                     <td className='px-4 py-3'>
                                         <button
                                             onClick={() => handleDelete(show.id)}
@@ -157,7 +157,7 @@ const AdminShows = () => {
                                 <input name='show_datetime' type='datetime-local' value={form.show_datetime} onChange={e => setForm(p => ({ ...p, show_datetime: e.target.value }))} required className={inputClass} />
                             </div>
                             <div>
-                                <label className={labelClass}>Ticket Price ($) *</label>
+                                <label className={labelClass}>Ticket Price (₹) *</label>
                                 <input name='price' type='number' step='0.01' min='0' value={form.price} onChange={e => setForm(p => ({ ...p, price: e.target.value }))} required className={inputClass} placeholder='e.g. 12.99' />
                             </div>
                             <div className='flex gap-3 justify-end mt-2'>

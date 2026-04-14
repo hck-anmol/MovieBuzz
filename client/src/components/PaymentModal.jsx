@@ -42,7 +42,7 @@ const PaymentModal = ({ isOpen, onClose, amount, onSuccessfulPayment }) => {
                                 <CreditCard className="text-primary w-6 h-6" /> Payment Details
                             </h2>
                             <p className="text-gray-400 mb-6 border-b border-gray-700 pb-4">
-                                Total Amount: <span className="text-white font-bold text-lg">${amount}</span>
+                                Total Amount: <span className="text-white font-bold text-lg">₹{amount}</span>
                             </p>
                             
                             {status === 'error' && (
@@ -106,7 +106,7 @@ const PaymentModal = ({ isOpen, onClose, amount, onSuccessfulPayment }) => {
                                     type="submit"
                                     className="w-full mt-4 bg-primary text-white py-4 rounded-lg font-bold hover:bg-primary/90 transition cursor-pointer shadow-lg shadow-primary/20"
                                 >
-                                    Pay ${amount}
+                                    Pay ₹{amount}
                                 </button>
                             </form>
                         </>

@@ -35,7 +35,7 @@ const AdminBookings = () => {
             <div className='mb-6'>
                 <h1 className='text-2xl font-bold'>Bookings</h1>
                 <p className='text-gray-400 text-sm mt-1'>
-                    {bookings.length} total bookings · Total revenue: <span className='text-green-400 font-semibold'>${totalRevenue.toFixed(2)}</span>
+                    {bookings.length} total bookings · Total revenue: <span className='text-green-400 font-semibold'>₹{totalRevenue.toFixed(2)}</span>
                 </p>
             </div>
 
@@ -93,7 +93,7 @@ const AdminBookings = () => {
                                         </td>
                                         <td className='px-4 py-3 text-gray-300 text-xs max-w-[120px] truncate'>{b.bookedSeats?.join(', ') || '-'}</td>
                                         <td className='px-4 py-3 text-green-400 font-medium flex items-center gap-1'>
-                                            <Banknote className='w-3.5 h-3.5' />${parseFloat(b.amount).toFixed(2)}
+                                            <Banknote className='w-3.5 h-3.5' />₹{parseFloat(b.amount).toFixed(2)}
                                         </td>
                                         <td className='px-4 py-3'>
                                             <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${b.is_paid ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
