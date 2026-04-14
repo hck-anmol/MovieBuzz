@@ -67,4 +67,49 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
+// Delete booking
+router.delete('/:id', protect, async (req, res) => {
+  try {
+    const [booking] = await pool.query('SELECT * FROM bookings WHERE id = ?', [req.params.id]);
+    if (booking.length === 0) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+    if (booking[0].user_id !== req.user.id) {
+      return res.status(403).json({ message: 'Unauthorized to delete this booking' });
+    }
+
+    await pool.query('DELETE FROM bookings WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Booking cancelled successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error cancelling booking' });
+  }
+});
+
+// Get booking details for invite (unprotected, only returns show info and seat numbers)
+router.get('/invite/:id', async (req, res) => {
+  try {
+    const [booking] = await pool.query(`
+      SELECT b.id, u.name as user_name
+      FROM bookings b
+      JOIN users u ON b.user_id = u.id
+      WHERE b.id = ?
+    `, [req.params.id]);
+
+    if (booking.length === 0) {
+      return res.status(404).json({ message: 'Invite not found' });
+    }
+
+    const [seats] = await pool.query('SELECT seat_number FROM booked_seats WHERE booking_id = ?', [req.params.id]);
+    
+    res.json({
+      inviterName: booking[0].user_name,
+      bookedSeats: seats.map(s => s.seat_number)
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 export default router;

@@ -6,6 +6,8 @@ import Home from './pages/Home'
 import Movies from './pages/Movies'
 import MovieDetails from './pages/MovieDetails'
 import TheatersList from './pages/TheatersList'
+import TheatersByCity from './pages/TheatersByCity'
+import TheaterShows from './pages/TheaterShows'
 import SeatLayout from './pages/SeatLayout'
 import MyBookings from './pages/MyBookings'
 import Favorite from './pages/Favorite'
@@ -34,6 +36,8 @@ function App() {
         <Route path='/movies' element={<Movies />} />
         <Route path='/movies/:id' element={<MovieDetails />} />
         <Route path='/movies/:id/theaters/:date' element={<TheatersList />} />
+        <Route path='/theaters' element={<TheatersByCity />} />
+        <Route path='/theaters/:theaterId' element={<TheaterShows />} />
         <Route path='/seat-layout/:showId' element={<SeatLayout />} />
         <Route path='/my-bookings' element={<MyBookings />} />
         <Route path='/favorites' element={<Favorite />} />

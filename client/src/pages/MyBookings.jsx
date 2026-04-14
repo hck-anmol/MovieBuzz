@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import BlurCircle from '../components/BlurCircle';
-import { CalendarIcon, ClockIcon, Ticket, Banknote } from 'lucide-react';
+import { CalendarIcon, ClockIcon, Ticket, Banknote, Share2 } from 'lucide-react';
 
 const MyBookings = () => {
     const { user, loading } = useAuth();
@@ -32,6 +32,23 @@ const MyBookings = () => {
             fetchBookings();
         }
     }, [user]);
+
+    const handleCancel = async (bookingId) => {
+        if (!window.confirm("Are you sure you want to cancel this booking?")) return;
+        try {
+            await axios.delete(`/api/bookings/${bookingId}`);
+            setBookings(bookings.filter(b => b.id !== bookingId));
+            toast.success("Booking cancelled successfully.");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to cancel booking");
+        }
+    };
+
+    const handleInvite = (bookingId, showId) => {
+        const inviteLink = `${window.location.origin}/seat-layout/${showId}?invite=${bookingId}`;
+        navigator.clipboard.writeText(inviteLink);
+        toast.success("Invite link copied to clipboard!");
+    };
 
     if (loading || isLoading) {
         return <div className='flex justify-center items-center px-6 md:px-16 lg:px-40 py-30 min-h-[80vh]'>Loading...</div>;
@@ -71,7 +88,21 @@ const MyBookings = () => {
                                     <div>
                                         <div className='flex justify-between items-start mb-2'>
                                             <h2 className='text-2xl font-semibold'>{booking.title}</h2>
-                                            <span className='bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-semibold'>Confirmed</span>
+                                            <div className='flex items-center gap-3'>
+                                                <span className='bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-xs font-semibold'>Confirmed</span>
+                                                <button 
+                                                    onClick={() => handleCancel(booking.id)}
+                                                    className='text-xs text-red-400 hover:text-white hover:bg-red-500/80 transition-colors px-3 py-1 rounded-full border border-red-500/30 font-medium'
+                                                >
+                                                    Cancel
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleInvite(booking.id, booking.show_id)}
+                                                    className='text-xs text-blue-400 hover:text-white hover:bg-blue-500/80 transition-colors px-3 py-1 rounded-full border border-blue-500/30 font-medium flex items-center gap-1'
+                                                >
+                                                    <Share2 className='w-3 h-3' /> Invite Friend
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className='flex flex-wrap gap-4 text-sm text-gray-300 mt-4'>
                                             <div className='flex items-center gap-2'>
