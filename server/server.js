@@ -6,6 +6,7 @@ import movieRoutes from './routes/movies.js';
 import showRoutes from './routes/shows.js';
 import bookingRoutes from './routes/bookings.js';
 import adminRoutes from './routes/admin.js';
+import theatersRoutes from './routes/theaters.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/api/movies', movieRoutes);
 app.use('/api/shows', showRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/theaters', theatersRoutes);
 
 const PORT = process.env.PORT || 5000;
 

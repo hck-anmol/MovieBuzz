@@ -3,10 +3,12 @@ import BlurCircle from './BlurCircle'
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useCity } from '../context/CityContext';
 
 const DateSelect = ({ dateTime, id }) => {
 
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const { city } = useCity();
 
     const [selected, setselected] = useState(null);
 
@@ -14,7 +16,10 @@ const DateSelect = ({ dateTime, id }) => {
         if (!selected) {
             return toast('Please select a date')
         }
-        navigate(`/movies/${id}/${selected}`)
+        if (!city) {
+            return toast.error('Please select a City from the top navigation bar first!');
+        }
+        navigate(`/movies/${id}/theaters/${selected}`)
         scrollTo(0, 0);
     }
     return (

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom'
-import { LayoutDashboard, Film, CalendarDays, Ticket, LogOut, Menu, X, ChevronRight } from 'lucide-react'
+import { LayoutDashboard, Film, CalendarDays, Ticket, LogOut, Menu, X, ChevronRight, Store } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext';
 import { assets } from '../../assets/assets';
 
@@ -8,6 +8,7 @@ import { assets } from '../../assets/assets';
 const navLinks = [
     { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
     { to: '/admin/movies', label: 'Movies', icon: Film },
+    { to: '/admin/theaters', label: 'Theaters', icon: Store },
     { to: '/admin/shows', label: 'Shows', icon: CalendarDays },
     { to: '/admin/bookings', label: 'Bookings', icon: Ticket },
 ]

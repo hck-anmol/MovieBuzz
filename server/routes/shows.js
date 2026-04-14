@@ -5,24 +5,34 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
   try {
-    const { movie_id, date } = req.query;
-    let query = 'SELECT shows.*, movies.title as movie_title, movies.poster_path FROM shows JOIN movies ON shows.movie_id = movies.id';
+    const { movie_id, date, theater_id } = req.query;
+    let query = 'SELECT shows.*, movies.title as movie_title, movies.poster_path, theaters.name as theater_name FROM shows JOIN movies ON shows.movie_id = movies.id LEFT JOIN theaters ON shows.theater_id = theaters.id';
     let queryParams = [];
+    let hasWhere = false;
 
     if (movie_id) {
-       query += ' WHERE shows.movie_id = ?';
+       query += hasWhere ? ' AND' : ' WHERE';
+       query += ' shows.movie_id = ?';
        queryParams.push(movie_id);
+       hasWhere = true;
+    }
+    
+    if (theater_id) {
+       query += hasWhere ? ' AND' : ' WHERE';
+       query += ' shows.theater_id = ?';
+       queryParams.push(theater_id);
+       hasWhere = true;
     }
     
     // Simplification for date filtering
     if (date) {
-        if(movie_id) {
-           query += ' AND DATE(shows.show_datetime) = ?'
-        } else {
-           query += ' WHERE DATE(shows.show_datetime) = ?'
-        }
+        query += hasWhere ? ' AND' : ' WHERE';
+        query += ' DATE(shows.show_datetime) = ?';
         queryParams.push(date);
     }
+
+    // ordered by time
+    query += ' ORDER BY shows.show_datetime ASC';
 
     const [shows] = await pool.query(query, queryParams);
     

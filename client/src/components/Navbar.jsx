@@ -3,11 +3,16 @@ import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { useCity } from '../context/CityContext'
+import CitySelectorModal from './CitySelectorModal'
+import { MapPin } from 'lucide-react'
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
-    const { user, logout } = useAuth()
-    const navigate = useNavigate()
+    const [isCityModalOpen, setIsCityModalOpen] = useState(false);
+    const { user, logout } = useAuth();
+    const { city } = useCity();
+    const navigate = useNavigate();
 
     return (
         <div className='fixed top-0 left-0 z-50 w-full flex items-center 
@@ -26,7 +31,14 @@ const Navbar = () => {
                 <Link to='/' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>Releases</Link>
                 <Link to='/favorites' onClick={() => { scrollTo(0, 0); setIsOpen(false) }}>Favorites</Link>
             </div>
-            <div className='flex items-center gap-8'>
+            <div className='flex items-center gap-6'>
+                <button 
+                    onClick={() => setIsCityModalOpen(true)} 
+                    className="max-md:hidden flex items-center gap-2 text-sm text-gray-300 hover:text-white transition cursor-pointer"
+                >
+                    <MapPin className="w-5 h-5 text-primary" />
+                    {city ? city.substring(0, 15) : 'Select City'}
+                </button>
                 <SearchIcon className='max-md:hidden w-6 h-6 cursor-pointer' />
                 {
                     !user ? (
@@ -56,6 +68,11 @@ const Navbar = () => {
                 }
             </div>
             <MenuIcon className='max-md:ml-4 md:hidden w-8 h-8 cursor-pointer' onClick={() => setIsOpen(!isOpen)} />
+            
+            <CitySelectorModal 
+                isOpen={isCityModalOpen} 
+                onClose={() => setIsCityModalOpen(false)} 
+            />
         </div>
     )
 }

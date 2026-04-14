@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
+import pool from '../config/db.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
-export const protect = (req, res, next) => {
+export const protect = async (req, res, next) => {
   let token;
 
   if (
@@ -18,7 +19,13 @@ export const protect = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    const [users] = await pool.query('SELECT id, name, email, role FROM users WHERE id = ?', [decoded.id]);
+    
+    if (users.length === 0) {
+        return res.status(401).json({ message: 'User no longer exists, please log in again' });
+    }
+    
+    req.user = users[0];
     next();
   } catch (error) {
     console.error(error);

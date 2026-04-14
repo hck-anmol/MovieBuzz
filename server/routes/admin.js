@@ -68,13 +68,14 @@ router.delete('/movies/:id', protect, async (req, res) => {
 
 // ─── SHOWS ─────────────────────────────────────────────────────────────────
 
-// GET all shows (with movie title)
+// GET all shows (with movie title and theater name)
 router.get('/shows', async (req, res) => {
     try {
         const [shows] = await pool.query(`
-            SELECT shows.*, movies.title as movie_title 
+            SELECT shows.*, movies.title as movie_title, theaters.name as theater_name
             FROM shows 
             JOIN movies ON shows.movie_id = movies.id 
+            LEFT JOIN theaters ON shows.theater_id = theaters.id
             ORDER BY shows.show_datetime DESC
         `);
         res.json(shows);
@@ -86,9 +87,9 @@ router.get('/shows', async (req, res) => {
 
 // POST add show
 router.post('/shows', protect, async (req, res) => {
-    const { id, movie_id, show_datetime, price } = req.body;
+    const { id, movie_id, theater_id, show_datetime, price } = req.body;
 
-    if (!id || !movie_id || !show_datetime || !price) {
+    if (!id || !movie_id || !theater_id || !show_datetime || !price) {
         return res.status(400).json({ message: 'All fields are required' });
     }
 
@@ -102,8 +103,8 @@ router.post('/shows', protect, async (req, res) => {
         const datetimeForMySQL = show_datetime.replace('T', ' ').replace('Z', '').substring(0, 19);
 
         await pool.query(
-            'INSERT INTO shows (id, movie_id, show_datetime, price) VALUES (?, ?, ?, ?)',
-            [id, movie_id, datetimeForMySQL, parseFloat(price)]
+            'INSERT INTO shows (id, movie_id, theater_id, show_datetime, price) VALUES (?, ?, ?, ?, ?)',
+            [id, movie_id, theater_id, datetimeForMySQL, parseFloat(price)]
         );
         res.status(201).json({ message: 'Show added successfully' });
     } catch (error) {
@@ -117,6 +118,55 @@ router.delete('/shows/:id', protect, async (req, res) => {
     try {
         await pool.query('DELETE FROM shows WHERE id = ?', [req.params.id]);
         res.json({ message: 'Show deleted' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// ─── THEATERS ──────────────────────────────────────────────────────────────
+
+// GET all theaters
+router.get('/theaters', async (req, res) => {
+    try {
+        const [theaters] = await pool.query('SELECT * FROM theaters ORDER BY city, name');
+        res.json(theaters);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// POST add theater
+router.post('/theaters', protect, async (req, res) => {
+    const { id, name, city, address } = req.body;
+
+    if (!id || !name || !city) {
+        return res.status(400).json({ message: 'ID, Name, and City are required' });
+    }
+
+    try {
+        const [existing] = await pool.query('SELECT id FROM theaters WHERE id = ?', [id]);
+        if (existing.length > 0) {
+            return res.status(400).json({ message: 'A theater with this ID already exists' });
+        }
+
+        await pool.query(
+            'INSERT INTO theaters (id, name, city, address, added_by) VALUES (?, ?, ?, ?, ?)',
+            [id, name, city, address || null, req.user.id]
+        );
+        res.status(201).json({ message: 'Theater added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// DELETE theater
+router.delete('/theaters/:id', protect, async (req, res) => {
+    try {
+        await pool.query('DELETE FROM theaters WHERE id = ?', [req.params.id]);
+        res.json({ message: 'Theater deleted' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

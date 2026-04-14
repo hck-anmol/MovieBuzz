@@ -20,6 +20,25 @@ export const AuthProvider = ({ children }) => {
       axios.defaults.headers.common['Authorization'] = `Bearer ${parsedUser.token}`;
     }
     setLoading(false);
+
+    // Setup axial interceptor for auto logout on 401
+    const interceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          // Token expired or user deleted
+          setUser(null);
+          localStorage.removeItem('userInfo');
+          delete axios.defaults.headers.common['Authorization'];
+          toast.error("Session expired or invalid, please login again");
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
   }, []);
 
   const login = async (email, password) => {

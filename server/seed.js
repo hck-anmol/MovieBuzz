@@ -36,12 +36,27 @@ const seedDatabase = async () => {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS theaters (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        city VARCHAR(100) NOT NULL,
+        address TEXT,
+        added_by INT,
+        lat DECIMAL(10, 8),
+        lon DECIMAL(11, 8),
+        FOREIGN KEY (added_by) REFERENCES users(id) ON DELETE SET NULL
+      )
+    `);
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS shows (
         id VARCHAR(50) PRIMARY KEY,
         movie_id VARCHAR(50),
+        theater_id VARCHAR(50),
         show_datetime DATETIME,
         price DECIMAL(10, 2),
-        FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
+        FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE,
+        FOREIGN KEY (theater_id) REFERENCES theaters(id) ON DELETE CASCADE
       )
     `);
 
@@ -82,12 +97,19 @@ const seedDatabase = async () => {
         );
       }
 
+      console.log('Seeding default theater...');
+      const defaultTheaterId = 'default_theater_1';
+      await pool.query(
+        'INSERT INTO theaters (id, name, city, address, lat, lon) VALUES (?, ?, ?, ?, ?, ?)',
+        [defaultTheaterId, 'Cinepolis Default', 'Mumbai', 'Default Mall, Mumbai', 19.0760, 72.8777]
+      );
+
       console.log('Seeding shows...');
       for (const show of activeShows) {
         const datetimeParts = show.showDateTime.replace('T', ' ').replace('.000Z', '');
         await pool.query(
-          'INSERT INTO shows (id, movie_id, show_datetime, price) VALUES (?, ?, ?, ?)',
-          [show._id, show.movie_id, datetimeParts, show.showPrice]
+          'INSERT INTO shows (id, movie_id, theater_id, show_datetime, price) VALUES (?, ?, ?, ?, ?)',
+          [show._id, show.movie_id, defaultTheaterId, datetimeParts, show.showPrice]
         );
       }
       console.log('Data seeded successfully!');

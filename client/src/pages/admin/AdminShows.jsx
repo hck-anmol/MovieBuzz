@@ -6,19 +6,22 @@ import { PlusIcon, Trash2, X } from 'lucide-react'
 const AdminShows = () => {
     const [shows, setShows] = useState([])
     const [movies, setMovies] = useState([])
+    const [theaters, setTheaters] = useState([])
     const [loading, setLoading] = useState(true)
     const [showModal, setShowModal] = useState(false)
     const [saving, setSaving] = useState(false)
-    const [form, setForm] = useState({ id: '', movie_id: '', show_datetime: '', price: '' })
+    const [form, setForm] = useState({ id: '', movie_id: '', theater_id: '', show_datetime: '', price: '' })
 
     const fetchData = async () => {
         try {
-            const [showsRes, moviesRes] = await Promise.all([
+            const [showsRes, moviesRes, theatersRes] = await Promise.all([
                 axios.get('/api/admin/shows'),
                 axios.get('/api/admin/movies'),
+                axios.get('/api/admin/theaters')
             ])
             setShows(showsRes.data)
             setMovies(moviesRes.data)
+            setTheaters(theatersRes.data)
         } catch (e) {
             toast.error('Failed to load shows')
         } finally {
@@ -35,7 +38,7 @@ const AdminShows = () => {
             await axios.post('/api/admin/shows', form)
             toast.success('Show added!')
             setShowModal(false)
-            setForm({ id: '', movie_id: '', show_datetime: '', price: '' })
+            setForm({ id: '', movie_id: '', theater_id: '', show_datetime: '', price: '' })
             fetchData()
         } catch (e) {
             toast.error(e.response?.data?.message || 'Failed to add show')
@@ -82,6 +85,7 @@ const AdminShows = () => {
                             <tr className='border-b border-gray-300/10 text-gray-400'>
                                 <th className='text-left px-4 py-3'>Show ID</th>
                                 <th className='text-left px-4 py-3'>Movie</th>
+                                <th className='text-left px-4 py-3'>Theater</th>
                                 <th className='text-left px-4 py-3'>Date & Time</th>
                                 <th className='text-left px-4 py-3'>Price</th>
                                 <th className='text-left px-4 py-3'>Actions</th>
@@ -94,6 +98,7 @@ const AdminShows = () => {
                                 <tr key={show.id} className='border-b border-gray-300/5 hover:bg-white/5 transition'>
                                     <td className='px-4 py-3 font-mono text-gray-400 text-xs'>{show.id}</td>
                                     <td className='px-4 py-3 font-medium'>{show.movie_title || show.movie_id}</td>
+                                    <td className='px-4 py-3 text-gray-400'>{show.theater_name || show.theater_id}</td>
                                     <td className='px-4 py-3 text-gray-400'>
                                         <div>{new Date(show.show_datetime).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</div>
                                         <div className='text-xs text-gray-500'>{new Date(show.show_datetime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
@@ -135,6 +140,15 @@ const AdminShows = () => {
                                     <option value=''>Select a movie</option>
                                     {movies.map(m => (
                                         <option key={m.id} value={m.id}>{m.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className={labelClass}>Theater *</label>
+                                <select name='theater_id' value={form.theater_id} onChange={e => setForm(p => ({ ...p, theater_id: e.target.value }))} required className={inputClass}>
+                                    <option value=''>Select a theater</option>
+                                    {theaters.map(t => (
+                                        <option key={t.id} value={t.id}>{t.name} ({t.city})</option>
                                     ))}
                                 </select>
                             </div>

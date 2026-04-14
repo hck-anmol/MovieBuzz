@@ -5,6 +5,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Movies from './pages/Movies'
 import MovieDetails from './pages/MovieDetails'
+import TheatersList from './pages/TheatersList'
 import SeatLayout from './pages/SeatLayout'
 import MyBookings from './pages/MyBookings'
 import Favorite from './pages/Favorite'
@@ -14,6 +15,7 @@ import Register from './pages/Register'
 import AdminLayout from './pages/admin/AdminLayout'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminMovies from './pages/admin/AdminMovies'
+import AdminTheaters from './pages/admin/AdminTheaters'
 import AdminShows from './pages/admin/AdminShows'
 import AdminBookings from './pages/admin/AdminBookings'
 
@@ -31,7 +33,8 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/movies' element={<Movies />} />
         <Route path='/movies/:id' element={<MovieDetails />} />
-        <Route path='/movies/:id/:date' element={<SeatLayout />} />
+        <Route path='/movies/:id/theaters/:date' element={<TheatersList />} />
+        <Route path='/seat-layout/:showId' element={<SeatLayout />} />
         <Route path='/my-bookings' element={<MyBookings />} />
         <Route path='/favorites' element={<Favorite />} />
         <Route path='/login' element={<Login />} />
@@ -41,6 +44,7 @@ function App() {
         <Route path='/admin' element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path='movies' element={<AdminMovies />} />
+          <Route path='theaters' element={<AdminTheaters />} />
           <Route path='shows' element={<AdminShows />} />
           <Route path='bookings' element={<AdminBookings />} />
         </Route>
