@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import BlurCircle from '../components/BlurCircle';
 import { CalendarIcon, ClockIcon, Ticket, Banknote, Share2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const MyBookings = () => {
     const { user, loading } = useAuth();
@@ -97,8 +98,11 @@ const MyBookings = () => {
                                                     Cancel
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleInvite(booking.id, booking.show_id)}
-                                                    className='text-xs text-blue-400 hover:text-white hover:bg-blue-500/80 transition-colors px-3 py-1 rounded-full border border-blue-500/30 font-medium flex items-center gap-1'
+                                                    onClick={() => {
+                                                        handleInvite(booking.id, booking.show_id);
+                                                        toast.success("Invite link copied to clipboard!")
+                                                    }}
+                                                    className='text-xs text-blue-400 hover:cursor-pointer hover:text-white hover:bg-blue-500/80 transition-colors px-3 py-1 rounded-full border border-blue-500/30 font-medium flex items-center gap-1'
                                                 >
                                                     <Share2 className='w-3 h-3' /> Invite Friend
                                                 </button>
