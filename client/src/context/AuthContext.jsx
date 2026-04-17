@@ -8,9 +8,9 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // set base url for axios depending on your backend
-  // For now using localhost:5000
-  axios.defaults.baseURL = 'http://localhost:5000';
+  // Use Vite env for deployed backend and fallback to local server during development.
+  const apiBaseUrl = (import.meta.env.VITE_API_URL || 'http://localhost:5000').replace(/\/$/, '');
+  axios.defaults.baseURL = apiBaseUrl;
 
   useEffect(() => {
     const userInfo = localStorage.getItem('userInfo');
